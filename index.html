@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dynamic Battleground Game</title>
+        <style>
+                body {
+                        background-color: #000;
+                        color: white;
+                        font-family: Arial, sans-serif;
+                        text-align: center;
+                }
+
+                h1 {
+                        font-size: 2em;
+                        margin-top: 20px;
+                }
+
+                #game-container {
+                        position: relative;
+                        width: 800px;
+                        height: 600px;
+                        margin: 0 auto;
+                        border: 2px solid #fff;
+                        background-color: #111;
+                }
+
+                canvas {
+                        width: 100%;
+                        height: 100%;
+                        background-color: #222;
+                }
+
+        </style>
+</head>
+
+<body>
+        <h1>Welcome to the Dynamic Battleground Game!</h1>
+        <p>Press Enter to Start and Select Difficulty</p>
+
+        <div id="game-container">
+                <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/pyodide@0.22.0/pyodide.js"></script>
+        <script>
+                async function startGame() {
+                        const pyodide = await loadPyodide();
+                        await pyodide.loadPackage(["pygame"]);
+
+                        const gameCode = `
+import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Game setup
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Dynamic Battleground Game")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+
+# Load images
+background = pygame.Surface((WIDTH, HEIGHT))
+player = {"x": 100, "y": HEIGHT // 2, "speed": 5}
+player_rect = pygame.Rect(player["x"], player["y"], 50, 50)
+
+# Game loop
+def game_loop():
+    running = True
+    while running:
+        screen.fill(BLACK)
+        pygame.draw.rect(screen, WHITE, player_rect)
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        pygame.time.Clock().tick(60)
+
+game_loop()
+            `;
+
+                        pyodide.runPython(gameCode);
+                }
+
+                startGame();
+        </script>
+</body>
+
+</html>
